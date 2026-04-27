@@ -1,46 +1,41 @@
-const tiposHoja = {
-    Bond: 1.00,
-    Couche: 2.00,
-    Opalina: 2.50,
-    Fotografico: 3.50,
-    Cartulina: 4.00
-}
+import { supabase } from "../config/supabase.js";
 
-const tamanos = {
-    Carta: 1.0,
-    Oficio: 1.3,
-    Tabloide: 1.8,
-    A3: 2.0
-}
+export const calcular = async (hoja, tamano, tipo, urgencia, cantidad) => {
+    // Consultar modificadores desde Supabase
+    const { data: dataHoja } = await supabase.from('tipos_hoja').select('id, price').eq('type', hoja).single()
+    const { data: dataTamano } = await supabase.from('tamanos').select('id, price').eq('type', tamano).single()
+    const { data: dataImpresion } = await supabase.from('impresion').select('id, price').eq('type', tipo).single()
+    const { data: dataUrgencia } = await supabase.from('urgencias').select('id, price').eq('type', urgencia).single()
 
-const impresion = {
-    BlancoNegro: 0.30,
-    Color: 0.80,
-}
+    console.log('dataHoja:', dataHoja)
+    console.log('dataTamano:', dataTamano)
+    console.log('dataImpresion:', dataImpresion)
+    console.log('dataUrgencia:', dataUrgencia)
 
-const urgencias = {
-    Normal: 0.00,
-    Regular: 0.20,
-    Alta: 0.40
-}
-
-// Funcion cotizar imprenta 
-export const calcular = (hoja, tamano, tipo, urgencia, hojas) => {
-
-    // Obtencion de datos
-    const precioPapel = tiposHoja[hoja]
-    const factor = tamanos[tamano]
-    const tinta = impresion[tipo]
-    const recargo = urgencias[urgencia]
-
-    // Formulas 
-    const costoPapel = hojas * precioPapel * factor
-    const costoTinta = hojas * tinta * factor
+    // Calcular 
+    const costoPapel = cantidad * dataHoja.price * dataTamano.price
+    const costoTinta = cantidad * dataImpresion.price * dataTamano.price
     const subtotal = costoPapel + costoTinta
-    const totalRecargo = subtotal * recargo
+    const totalRecargo = subtotal * dataUrgencia.price
     const total = subtotal + totalRecargo
 
-    // respuesta
+    // Guardar cotizar en Supabase 
+    const { data, error } = await supabase.from('cotizacion').insert({
+        tipo_hoja_id: dataHoja.id,
+        tamano_id: dataTamano.id,
+        impresion_id: dataImpresion.id,
+        urgencia_id: dataUrgencia.id,
+        cantidad: cantidad,
+        costo_papel: costoPapel.toFixed(2),
+        costo_tinta: costoTinta.toFixed(2),
+        recargo: totalRecargo.toFixed(2),
+        precio_total: total.toFixed(2)
+    })
+
+    console.log('error insert:', error)
+    console.log('data insert:', data)
+
+
     return {
         costoPapel: costoPapel.toFixed(2),
         costoTinta: costoTinta.toFixed(2),
@@ -48,3 +43,6 @@ export const calcular = (hoja, tamano, tipo, urgencia, hojas) => {
         total: total.toFixed(2)
     }
 }
+
+
+
