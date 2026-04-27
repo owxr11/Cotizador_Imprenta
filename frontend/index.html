@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COTIZADOR DE IMPRENTA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Unbounded:wght@200..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-secondary-subtle min-vh-100">
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+
+        <div class="bg-white px-5 py-5 shadow-sm" style="width: 580px;">
+
+            <!-- TÍTULO -->
+            <h1 class="text-center fw-bold mb-4 fs-2">Cotizador de Imprenta</h1>
+
+            <!-- Tipo de hoja -->
+            <div class="row align-items-center mb-3">
+                <label class="col-5 col-form-label fs-6" for="sel-hoja">Tipo de hoja:</label>
+                <div class="col-7">
+                    <select class="form-select form-select-sm rounded-0" id="sel-hoja">
+                        <option value="Bond">Bond</option>
+                        <option value="Couche">Couche</option>
+                        <option value="Opalina">Opalina</option>
+                        <option value="Fotografico">Fotográfico</option>
+                        <option value="Cartulina">Cartulina</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tamaño -->
+            <div class="row align-items-center mb-3">
+                <label class="col-5 col-form-label fs-6" for="sel-tamano">Tamaño:</label>
+                <div class="col-7">
+                    <select class="form-select form-select-sm rounded-0" id="sel-tamano">
+                        <option value="Carta">Carta</option>
+                        <option value="Oficio">Oficio</option>
+                        <option value="Tabloide">Tabloide</option>
+                        <option value="A3">A3</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tipo de impresión -->
+            <div class="row align-items-center mb-3">
+                <label class="col-5 col-form-label fs-6" for="sel-impresion">Tipo de impresión:</label>
+                <div class="col-7">
+                    <select class="form-select form-select-sm rounded-0" id="sel-impresion">
+                        <option value="BlancoNegro">Blanco y Negro</option>
+                        <option value="Color">Color</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Urgencia -->
+            <div class="row align-items-center mb-3">
+                <label class="col-5 col-form-label fs-6" for="sel-urgencia">Urgencia:</label>
+                <div class="col-7">
+                    <select class="form-select form-select-sm rounded-0" id="sel-urgencia">
+                        <option value="Normal">Normal</option>
+                        <option value="Regular">Regular</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Cantidad de hojas -->
+            <div class="row align-items-center mb-4">
+                <label class="col-5 col-form-label fs-6" for="inp-hojas">Cantidad de hojas:</label>
+                <div class="col-7">
+                    <input type="number" class="form-control form-control-sm rounded-0 text-center" id="inp-hojas"
+                        min="1" max="10000" placeholder="" />
+                </div>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="row mb-4">
+                <div class="col-6">
+                    <button class="btn btn-primary w-100 rounded-0" id="btn-calcular">
+                        Calcular
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-danger w-100 rounded-0" id="btn-borrar">
+                        Borrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- DESGLOSE -->
+            <div class="row mb-1">
+                <span class="col-6 fs-6">Costo papel:</span>
+                <span class="col-6 text-end fs-6" id="res-papel">$0.00</span>
+            </div>
+            <div class="row mb-1">
+                <span class="col-6 fs-6">Costo tinta:</span>
+                <span class="col-6 text-end fs-6" id="res-tinta">$0.00</span>
+            </div>
+            <div class="row mb-4">
+                <span class="col-6 fs-6">Recargo:</span>
+                <span class="col-6 text-end fs-6" id="res-recargo">$0.00</span>
+            </div>
+
+            <!-- TOTAL -->
+            <div class="bg-info-subtle text-center py-4">
+                <span class="fs-3 fw-bold text-success" id="res-total">Total a pagar: $0.00 MX</span>
+            </div>
+
+        </div>
+    </div>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
