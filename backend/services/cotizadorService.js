@@ -1,11 +1,35 @@
-import { supabase } from "../config/supabase.js";
+import { supabase } from "../config/supabase.js"
+
+// Cache de precios
+let cache = null
+
+async function getPrecios() {
+    if (cache) return cache  // si ya tiene datos no consulta de nuevo
+
+    const [hojas, tamanos, impresiones, urgencias] = await Promise.all([
+        supabase.from('tipos_hoja').select('type, id, price'),
+        supabase.from('tamanos').select('type, id, price'),
+        supabase.from('impresion').select('type, id, price'),
+        supabase.from('urgencias').select('type, id, price'),
+    ])
+
+    cache = {
+        hojas: hojas.data,
+        tamanos: tamanos.data,
+        impresiones: impresiones.data,
+        urgencias: urgencias.data
+    }
+
+    return cache
+}
 
 export const calcular = async (hoja, tamano, tipo, urgencia, cantidad) => {
-    // Consultar modificadores desde Supabase
-    const { data: dataHoja } = await supabase.from('tipos_hoja').select('id, price').eq('type', hoja).single()
-    const { data: dataTamano } = await supabase.from('tamanos').select('id, price').eq('type', tamano).single()
-    const { data: dataImpresion } = await supabase.from('impresion').select('id, price').eq('type', tipo).single()
-    const { data: dataUrgencia } = await supabase.from('urgencias').select('id, price').eq('type', urgencia).single()
+    const precios = await getPrecios()
+
+    const dataHoja = precios.hojas.find(h => h.type === hoja)
+    const dataTamano = precios.tamanos.find(t => t.type === tamano)
+    const dataImpresion = precios.impresiones.find(i => i.type === tipo)
+    const dataUrgencia = precios.urgencias.find(u => u.type === urgencia)
 
     console.log('dataHoja:', dataHoja)
     console.log('dataTamano:', dataTamano)
@@ -25,18 +49,23 @@ export const calcular = async (hoja, tamano, tipo, urgencia, cantidad) => {
         tamano_id: dataTamano.id,
         impresion_id: dataImpresion.id,
         urgencia_id: dataUrgencia.id,
+        hoja_nombre: hoja,
+        tamano_nombre: tamano,
+        impresion_nombre: tipo,
+        urgencia_nombre: urgencia,
         cantidad: cantidad,
         costo_papel: costoPapel.toFixed(2),
         costo_tinta: costoTinta.toFixed(2),
         recargo: totalRecargo.toFixed(2),
         precio_total: total.toFixed(2)
-    })
+    }).select()
 
     console.log('error insert:', error)
     console.log('data insert:', data)
 
 
     return {
+        id: data[0].id,
         costoPapel: costoPapel.toFixed(2),
         costoTinta: costoTinta.toFixed(2),
         recargo: totalRecargo.toFixed(2),
